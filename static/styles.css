@@ -1,0 +1,50 @@
+body {
+    background-color: rgb(10, 54, 116);
+}
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: auto;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.selected {
+    background-color: orange;
+    color: white;
+}
+
+.predicted {
+    background-color: blue;
+    color: white;
+}
+
+.tie {
+    background-color: rgb(128, 0, 23);
+    color: white;
+}
+
+.cop {
+    background-color: rgb(13, 172, 26);
+    color: white;
+}
+
+.center {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    text-align: center;
+}
