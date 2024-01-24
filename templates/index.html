@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Προμηθέας ΚΙΝΟ</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // JavaScript function to toggle the selection of a number
+        function toggleSelection(number) {
+            var cell = document.getElementById("cell" + number);
+            cell.classList.toggle("selected");
+
+            // Get the form input for the clicked number
+            var input = document.getElementById("selected_number" + number);
+            
+            // Check if the input exists
+            
+            if (input) {
+            // Toggle the input value
+            input.value = input.value === "" ? number : "";
+        }
+
+            // Check if there are any selected numbers
+            var selectedNumbers = document.querySelectorAll('.selected');
+            var submitButton = document.getElementById('submitButton');
+            var counterElement = document.getElementById('counter');
+
+            // Enable or disable the submit button based on the presence of selected numbers
+            submitButton.disabled = selectedNumbers.length === 0;
+
+            // Update the form with the currently selected numbers
+            updateForm(selectedNumbers);
+
+            // Display the updated counter value
+            counterElement.innerText = selectedNumbers.length;
+        }
+        // Function to update the form with selected numbers
+        function updateForm(selectedNumbers) {
+            var form = document.getElementById('predictionForm');
+            var inputContainer = document.getElementById('inputContainer');
+
+            // Remove existing input elements
+            inputContainer.innerHTML = '';
+
+            // Dynamically generate inputs based on the clicked cells
+            selectedNumbers.forEach(function (cell) {
+                var number = cell.textContent;  // Get the number from the cell
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_numbers[]';
+                input.value = number;
+                inputContainer.appendChild(input);
+            });
+
+            // Enable or disable the submit button based on the presence of selected numbers
+            form.querySelector('button').disabled = selectedNumbers.length === 0;
+        }
+    </script>
+    </head>
+<body class="body">
+    <!-- Display the tables for predictions -->
+    {% for num_predictions in range(1, 13) %}
+        <table>
+            <tr>
+                <td colspan="10" style="text-align: center; height: 2px color #d98f8f;"><h2 style="color: aliceblue;">Μελλοντική πρόβλεψη {{ num_predictions }} αριθμών:</h2></td>
+            </tr>
+            {% if prediction_dict[num_predictions] is defined and prediction_dict[num_predictions]|length > 0 %}
+            <tr>
+                {% for number in prediction_dict[num_predictions] %}
+                    <td class="{% if number in selected_numbers %}tie{% else %}predicted{% endif %}" onclick="toggleSelection({{ number }})">{{ number }}</td>
+                {% endfor %}
+            </tr>
+        {% endif %}
+        
+        </table>
+    {% endfor %}
+
+    <!-- Display the main table for selected numbers -->
+    <table>
+        {% for row in range(8) %}
+            <tr style="color: aliceblue;">
+                {% for col in range(10) %}
+                    <td id="cell{{ (row * 10) + col + 1 }}" onclick="toggleSelection({{ (row * 10) + col + 1 }})">{{ (row * 10) + col + 1 }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <div class="center">
+        <!-- Display the counter -->
+        <div style="color: aliceblue;">επιλεγμένοι αριθμοί: <span id="counter">0</span></div>
+        
+        <!-- Update the form in index.html -->
+        <form method="post" action="{{ url_for('index') }}" id="predictionForm">
+            <div id="inputContainer"></div>
+            <button type="submit" id="submitButton" disabled>Εισάγω</button>
+        </form>
+    </div>
+
+    {% for num_predictions in range(1, 13) %}
+    <!-- Display the tables for comparison -->
+    <table>
+        {% if comparison_result_dict and num_predictions in comparison_result_dict %}
+            <tr>
+                <td colspan="10" style="text-align: center; color: rgb(255, 255, 255);">
+                    <p>Επιτυχίες για {{ num_predictions }} αριθμόυς:</p>
+                </td>
+            </tr>
+            <tr>
+                {% for result in comparison_result_dict[num_predictions] %}
+                    <td class="{% if result['tie'] %}cop{% endif %}">{{ result['number'] }}</td>
+                {% endfor %}
+            </tr>
+        {% endif %}
+        <!-- Display the success count for each prediction group -->
+
+ <!-- 
+        {% if success_counts and num_predictions in success_counts %}
+        <tr>           
+            <td colspan="10" style="text-align: center;">
+                <p>Επιτυχίες {{ success_counts[num_predictions] }}/{{ num_predictions }}</p>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="10" style="text-align: center;">
+                <p>Επιτυχίες για {{ num_predictions }} αριθμούς: 0</p>
+            </td>
+        </tr>
+    {% endif %}
+    </table>
+{% endfor %} 
+ -->
+
+
+</body>
+</html>
