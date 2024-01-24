@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Compare Forecasts Result</title>
+    <!-- Add your styles or link to an external stylesheet if needed -->
+</head>
+<body>
+    <h1>Comparison Results</h1>
+
+    <!-- Display the comparison results as needed -->
+    <!-- You can use the 'comparison_result' variable in your template -->
+
+    <!-- Example: Display the numbers and whether they match or not -->
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Match</th>
+        </tr>
+        {% for result in comparison_result %}
+            <tr>
+                <td>{{ result['number'] }}</td>
+                <td>{{ 'Match' if result['tie'] else 'No Match' }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Add more HTML elements or formatting as needed -->
+
+    <!-- Add the form for the "Compare Forecasts" button -->
+    <form method="post" action="{{ url_for('compare_forecasts') }}">
+        <!-- You can include additional input fields or hidden fields if needed -->
+        <button type="submit">Compare Forecasts</button>
+    </form>
+</body>
+</html>

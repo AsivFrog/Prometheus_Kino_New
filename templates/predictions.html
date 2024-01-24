@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions</title>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+$(document).ready(function() {
+    // Function to send selected predictions to Flask route for saving
+    function saveSelectedPredictions(selectedPredictions, sheetName) {
+        $.ajax({
+            type: "POST",
+            url: "/save_predictions",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({ selected_predictions: selectedPredictions, sheet_name: sheetName }),
+            success: function (response) {
+                console.log("Selected predictions saved successfully!");
+            },
+            error: function (error) {
+                console.error("Error saving selected predictions:", error);
+            }
+        });
+    }
+
+    // Example code to handle user interaction (modify as needed)
+    $(".save-selected-predictions-btn").on("click", function() {
+        var selectedPredictions = [];
+        // Iterate over all checkboxes and add checked predictions to the array
+        $(".prediction-checkbox:checked").each(function() {
+            var numPredictions = $(this).parent().prev().text();
+            var numbers = numPredictions.split(', ').map(Number);
+            selectedPredictions.push({ num_predictions: numPredictions, numbers: numbers });
+        });
+        var sheetName = $(this).data("sheet-name");
+        saveSelectedPredictions(selectedPredictions, sheetName);
+    });
+});
+
+    </script>
+</head>
+<body>
+    {% for key, predictions in daily_predictions.items() %}
+        <div class="prediction-set">
+            <h2>{{ key }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prediction</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for num_predictions, numbers in predictions.items() %}
+                        <tr>
+                            <td>{{ num_predictions }} Numbers: {{ numbers | join(', ') }}</td>
+                            <td><input type="checkbox" class="prediction-checkbox" value="{{ num_predictions }}"></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="save-selected-predictions-btn" data-sheet-name="{{ key }}">Save Selected Predictions</button>
+        </div>
+    {% endfor %}
+</body>
+</html>
